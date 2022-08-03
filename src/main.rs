@@ -7,7 +7,7 @@ mod read_variable_length_records;
 #[allow(dead_code)]
 struct LasFile {
     header: read_header::Header,
-    variable_length_records: Vec<read_variable_length_records::VariableLengthRecord>
+    variable_length_records: read_variable_length_records::VariableLengthRecords
 }
 
 fn read_file(file_name: &String) -> std::io::Result<LasFile> {

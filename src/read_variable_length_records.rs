@@ -11,6 +11,8 @@ pub struct VariableLengthRecord {
     description: String
 }
 
+pub type VariableLengthRecords = Vec<VariableLengthRecord>;
+
 fn parse_reserved(file: &mut File) -> std::io::Result<u16> {
     let mut reserved_bytes: [u8; 2] = [0; 2];
     file.read(&mut reserved_bytes)?;
@@ -79,8 +81,8 @@ fn parse_vlr(file: &mut File) -> std::io::Result<VariableLengthRecord> {
     Ok(vlr)
 }
 
-pub fn parse_variable_length_records(file: &mut File, num_vlrs: &u32) -> std::io::Result<Vec<VariableLengthRecord>> {
-    let mut vlrs: Vec<VariableLengthRecord> = Vec::new();
+pub fn parse_variable_length_records(file: &mut File, num_vlrs: &u32) -> std::io::Result<VariableLengthRecords> {
+    let mut vlrs: VariableLengthRecords = Vec::new();
     println!("Parsing {} variable length records", num_vlrs);
     for _ in 0..*num_vlrs {
         let new_vlr = parse_vlr(file)?;
