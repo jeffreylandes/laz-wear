@@ -18,11 +18,11 @@ pub struct Header {
     generating_software: String,
     file_creation_day_of_year: u16,
     file_creation_year: u16,
-    header_size: u16,
-    offset_to_point_data: u32,
+    pub header_size: u16,
+    pub offset_to_point_data: u32,
     pub number_vlrs: u32,
-    point_data_record_format: char,
-    point_data_record_length: u16,
+    pub point_data_record_format: char,
+    pub point_data_record_length: u16,
     pub number_point_records: u32,
     number_point_by_return: [u32; 5],
     x_scale_factor: f64,
@@ -130,6 +130,8 @@ pub fn parse_header(file: &mut File) -> std::io::Result<Header> {
 
     let version_major = parse_u8(file)?;
     let version_minor = parse_u8(file)?;
+
+    println!("Version: {}.{}", version_major, version_minor);
 
     let system_identifier = parse_string_32_bytes(file)?;
     let generating_software = parse_string_32_bytes(file)?;

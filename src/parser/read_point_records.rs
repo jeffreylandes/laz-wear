@@ -1,5 +1,8 @@
 use std::fs::File;
 use std::io::prelude::*;
+use std::io::SeekFrom;
+
+use crate::parser::read_header::Header;
 
 #[allow(dead_code)]
 pub struct PointRecord {
@@ -8,7 +11,7 @@ pub struct PointRecord {
     z: f32,
     intensity: u16,
     return_bits: u8,
-    classification: u8,
+    pub classification: u8,
     scan_angle_rank: char,
     user_data: u8,
     point_source_id: u16
@@ -66,12 +69,20 @@ fn parse_point_record(file: &mut File) -> std::io::Result<PointRecord> {
     Ok(point_record)
 }
 
-pub fn parse_point_records(file: &mut File, num_records: &u32) -> std::io::Result<PointRecords> {
+pub fn parse_point_records(file: &mut File, header: &Header) -> std::io::Result<PointRecords> {
     let mut point_records: PointRecords = Vec::new();
+    let num_records = header.number_point_records;
+    let point_record_size = header.point_data_record_length;
 
-    for _ in 0..*num_records {
+    for record_number in 0..num_records {
+        let point_start = header.offset_to_point_data + (record_number * point_record_size as u32);
+        file.seek(SeekFrom::Start(point_start as u64))?;
         let point_record = parse_point_record(file)?;
-        point_records.push(point_record)
+        point_records.push(point_record);
+
+        if record_number > 3 {
+            panic!("");
+        }
     }
 
     Ok(point_records)

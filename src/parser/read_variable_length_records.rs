@@ -88,5 +88,7 @@ pub fn parse_variable_length_records(file: &mut File, num_vlrs: &u32) -> std::io
         let new_vlr = parse_vlr(file)?;
         vlrs.push(new_vlr)
     }
+    println!("{} vlrs", vlrs.len());
+    println!("{}", vlrs[vlrs.len() - 1].description);
     Ok(vlrs)
 }
