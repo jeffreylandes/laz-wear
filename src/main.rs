@@ -60,5 +60,5 @@ fn main() {
 
     info::extract_file_info(&las_file, info);
     
-    println!("Successfully parsed {} with {} points", file_name, las_file.header.number_point_records);
+    println!("Successfully parsed {}.", file_name);
 }

@@ -74,15 +74,13 @@ pub fn parse_point_records(file: &mut File, header: &Header) -> std::io::Result<
     let num_records = header.number_point_records;
     let point_record_size = header.point_data_record_length;
 
+    println!("Parsing {} point records", header.number_point_records);
+
     for record_number in 0..num_records {
         let point_start = header.offset_to_point_data + (record_number * point_record_size as u32);
         file.seek(SeekFrom::Start(point_start as u64))?;
         let point_record = parse_point_record(file)?;
         point_records.push(point_record);
-
-        if record_number > 3 {
-            panic!("");
-        }
     }
 
     Ok(point_records)
