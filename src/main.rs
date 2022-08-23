@@ -4,22 +4,25 @@ use colored::Colorize;
 mod parser;
 mod info;
 
-fn get_tag(args: &Vec<String>, tag: &str) -> usize {
+#[derive(Debug, Clone)]
+struct UsageError;
+
+fn get_tag(args: &Vec<String>, tag: &str) -> Result<usize, UsageError> {
     let position = args.iter().position(|x| x == tag);
     let tag_index = match position {
         Some(index) => index,
         None => {
-            eprintln!("{}: Incorrect usage.", "error".red());
-            eprintln!("Correct usage: {} --file file.las --info info", "laswear".cyan());
-            panic!("Incorrect usage.");
+            eprintln!("\n{}: Incorrect usage.", "error".red());
+            eprintln!("Correct usage: {} --file file.las --info info\n", "laswear".cyan());
+            return Err(UsageError);
         }
     };
     if tag_index == args.len() - 1 {
         eprintln!("{}: Incorrect usage.", "error".red());
         eprintln!("Correct usage: {} --file file.las --info info", "laswear".cyan());
-        panic!("Incorrect usage.");
+        return Err(UsageError);
     }
-    tag_index + 1
+    Ok(tag_index + 1)
 }
 
 fn asking_for_help(args: &Vec<String>) -> bool {
@@ -45,14 +48,14 @@ fn main() {
         return;
     }
 
-    let file_name_index = get_tag(&args, "--file");
+    let file_name_index = get_tag(&args, "--file").expect("");
     let file_name = &args[file_name_index];
     let las_file: parser::LasFile = match parser::read_file(&file_name) {
         Ok(parsed_file) => parsed_file,
         Err(e) => panic!("Encountered error while parsing file: {}", e),
     };
 
-    let info_index = get_tag(&args, "--info");
+    let info_index = get_tag(&args, "--info").expect("");
     let info = &args[info_index];
 
     info::extract_file_info(&las_file, info);
